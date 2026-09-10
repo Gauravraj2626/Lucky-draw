@@ -2,83 +2,270 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lucky Draw • Spin & Win</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0b0706">
+<title>RoyalCafe • Lucky Spin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#fff7e6,#ffe0b2);min-height:100vh;display:flex;justify-content:center;align-items:center;color:#3b2414}
-.card{width:min(94vw,520px);background:#fff;border-radius:28px;padding:28px 22px 30px;text-align:center;box-shadow:0 18px 50px #0002}
-h1{margin:4px 0 6px;font-size:32px}.sub{margin:0 0 18px;color:#76583f}
-.wheel-wrap{position:relative;width:min(82vw,370px);height:min(82vw,370px);margin:8px auto 20px}
-canvas{width:100%;height:100%;border-radius:50%;box-shadow:0 8px 25px #0003}
-.pointer{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:38px solid #e53935;filter:drop-shadow(0 3px 2px #0003);z-index:2}
-button{border:0;border-radius:999px;background:#e65100;color:white;font-size:20px;font-weight:700;padding:15px 34px;cursor:pointer;box-shadow:0 8px 18px #e6510040}
-button:disabled{opacity:.6;cursor:not-allowed}
-.result{min-height:58px;margin-top:18px;padding:14px;border-radius:15px;background:#fff4df;font-size:18px;font-weight:700}
-.note{font-size:12px;color:#876f5a;margin-top:14px;line-height:1.45}
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+:root{--gold:#f3c86a;--gold2:#fff0b0;--wine:#6f0e17;--cream:#fff5d8;--ink:#140806}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#080504}
+body{
+ color:var(--cream);font-family:"DM Sans",Arial,sans-serif;
+ display:flex;justify-content:center;overflow-x:hidden;
+ background:
+ radial-gradient(circle at 50% 8%,rgba(143,53,27,.52),transparent 34%),
+ radial-gradient(circle at 8% 70%,rgba(217,151,50,.12),transparent 25%),
+ linear-gradient(135deg,#160806 0%,#090504 50%,#190906 100%);
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+ background-image:radial-gradient(#fff 1px,transparent 1px);
+ background-size:90px 90px;
+}
+.page{width:min(100%,590px);padding:16px 12px 28px;min-height:100vh}
+.card{
+ position:relative;overflow:hidden;border-radius:34px;padding:25px 14px 29px;
+ background:linear-gradient(155deg,rgba(45,13,9,.98),rgba(11,5,4,.99) 62%,rgba(32,8,7,.98));
+ border:1px solid rgba(242,194,94,.62);
+ box-shadow:0 35px 100px #000d,0 0 80px rgba(227,164,51,.08),inset 0 1px rgba(255,255,255,.09);
+}
+.card:before{
+ content:"";position:absolute;inset:7px;border-radius:28px;
+ border:1px solid rgba(255,223,142,.13);pointer-events:none
+}
+.ambient{position:absolute;width:260px;height:260px;border-radius:50%;filter:blur(80px);background:#bd7425;opacity:.12;top:210px;left:50%;transform:translateX(-50%);pointer-events:none}
+.brand-block{text-align:center;position:relative;z-index:1}
+.crown{font-size:35px;color:var(--gold);line-height:1;text-shadow:0 0 20px #e4a63d55}
+.brand{
+ font-family:Cinzel,Georgia,serif;font-size:clamp(38px,10vw,57px);font-weight:800;
+ letter-spacing:4px;text-transform:uppercase;
+ background:linear-gradient(180deg,#fff0ae 0%,#e7ad42 45%,#fff0aa 72%,#bd7920 100%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 3px 2px #000);
+}
+.tag{font-size:9px;letter-spacing:5px;color:#e9d5a6;margin-top:7px}
+.motto{font-family:"Playfair Display",Georgia,serif;font-style:italic;color:#e5b75d;font-size:19px;margin-top:8px}
+.ornament{display:flex;align-items:center;justify-content:center;gap:11px;margin:15px 0 18px;color:#e1ad4d}
+.ornament i{height:1px;width:78px;background:linear-gradient(90deg,transparent,#dcae50,transparent)}
+.ornament span{font-size:10px}
+
+.hero{
+ position:relative;text-align:center;padding:15px 8px 14px;border-radius:18px;
+ background:linear-gradient(110deg,#45070c,#8e161d 50%,#47070b);
+ border:1px solid #d39a37;
+ box-shadow:inset 0 1px #fff4b833,0 13px 30px #0007;
+}
+.hero:after{content:"";position:absolute;inset:4px;border:1px solid #ffe29a22;border-radius:14px}
+.hero h1{
+ position:relative;z-index:1;margin:0;font-family:Cinzel,Georgia,serif;
+ font-size:clamp(29px,8vw,42px);letter-spacing:4px;color:#ffe29a;
+ text-shadow:0 3px 0 #5a080c,0 0 18px #ffdc7a2e
+}
+.hero p{position:relative;z-index:1;margin:5px 0 0;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#fff0c7}
+
+.wheel-zone{position:relative;width:min(94vw,470px);aspect-ratio:1;margin:20px auto 16px}
+.wheel-zone:before{
+ content:"";position:absolute;inset:4%;border-radius:50%;
+ background:radial-gradient(circle,#e7ad48 0 2%,transparent 3%);
+ box-shadow:0 0 65px #e4a63222;
+}
+canvas{position:relative;width:100%;height:100%;display:block}
+.pointer{
+ position:absolute;z-index:5;left:50%;top:-2px;transform:translateX(-50%);
+ width:42px;height:58px;filter:drop-shadow(0 5px 4px #000);
+}
+.pointer:before{
+ content:"";position:absolute;left:6px;top:0;width:30px;height:43px;
+ background:linear-gradient(145deg,#fff4bd,#f5c44f 50%,#a35d0e);
+ clip-path:polygon(50% 100%,0 0,100% 0);
+ border:1px solid #ffe9a1;
+}
+.pointer:after{
+ content:"";position:absolute;left:15px;top:8px;width:12px;height:12px;border-radius:50%;
+ background:#9b121b;border:2px solid #ffe4a0;box-shadow:0 0 8px #ffcf5c;
+}
+
+.spin{
+ display:block;margin:0 auto;
+ border:1px solid #fff0ad;border-radius:999px;min-width:225px;padding:16px 35px;
+ font:700 14px "DM Sans",Arial,sans-serif;letter-spacing:2.4px;color:#271006;
+ background:linear-gradient(180deg,#fff0a7 0%,#f1bf52 42%,#b56d17 100%);
+ box-shadow:0 11px 30px #0009,inset 0 2px #fff8,inset 0 -2px #7d430b;
+ cursor:pointer;transition:.18s ease;position:relative;overflow:hidden
+}
+.spin:before{content:"";position:absolute;top:-60%;left:-20%;width:30%;height:220%;transform:rotate(25deg);background:#fff8;transition:.45s}
+.spin:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.spin:hover:before{left:110%}.spin:active{transform:translateY(1px)}.spin:disabled{opacity:.55;cursor:not-allowed}
+
+.result{
+ display:none;margin:18px auto 0;padding:20px 14px;max-width:440px;text-align:center;
+ border-radius:20px;background:linear-gradient(145deg,#35100e,#160605);
+ border:1px solid #c28b37;box-shadow:0 15px 35px #0007,inset 0 1px #fff2;
+ font-size:14px;line-height:1.55;color:#ffe9b3
+}
+.result.show{display:block;animation:reveal .55s cubic-bezier(.2,.8,.2,1)}
+.result .headline{font-family:Cinzel,Georgia,serif;color:#ffd66f;font-size:24px;font-weight:700;letter-spacing:.5px}
+.result .discount{display:block;font-family:Cinzel,Georgia,serif;font-size:32px;color:#fff0aa;margin:3px 0}
+.result small{display:block;color:#cdb585;font-size:10px;margin-top:8px}
+.footer{margin-top:20px;text-align:center;color:#ad8b55;font-size:8px;letter-spacing:2px}
+.terms{text-align:center;color:#69553a;font-size:8px;margin-top:8px}
+@keyframes reveal{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:390px){.brand{font-size:35px}.tag{letter-spacing:3px}.wheel-zone{width:94vw}}
 </style>
 </head>
 <body>
-<div class="card">
-<h1>🎉 SPIN & WIN 🎉</h1>
-<p class="sub">Spin the wheel for your lucky discount coupon!</p>
-<div class="wheel-wrap">
-<div class="pointer"></div>
-<canvas id="wheel" width="700" height="700"></canvas>
+<div class="page">
+<main class="card">
+<div class="ambient"></div>
+<section class="brand-block">
+ <div class="crown">♛</div>
+ <div class="brand">RoyalCafe</div>
+ <div class="tag">GOOD FOOD • BETTER MOOD</div>
+ <div class="motto">Dine • Relax • Be Royal</div>
+ <div class="ornament"><i></i><span>✦</span><i></i></div>
+</section>
+
+<section class="hero">
+ <h1>LUCKY SPIN</h1>
+ <p>SPIN &amp; WIN A SPECIAL DISCOUNT ON YOUR NEXT BILL</p>
+</section>
+
+<div class="wheel-zone">
+ <div class="pointer"></div>
+ <canvas id="wheel" width="1000" height="1000"></canvas>
 </div>
-<button id="spin">SPIN NOW</button>
-<div id="result" class="result">Your coupon will appear here.</div>
-<div class="note">Prize probabilities: 10% coupon 40% • 20% coupon 35% • 30% coupon 15% • 40% coupon 10%.</div>
+
+<button class="spin" id="spin">♛ &nbsp; SPIN TO WIN &nbsp; ♛</button>
+<div class="result" id="result"></div>
+
+<div class="footer">DELICIOUS FOOD • GREAT COMPANY • SPECIAL OFFERS • ROYAL EXPERIENCE</div>
+<div class="terms">One spin per customer • Present your winning screen to RoyalCafe staff</div>
+</main>
 </div>
+
 <script>
+/*
+  Prize weights:
+  10% = 40
+  15% = 25
+  20% = 15
+  25% = 10
+  30% = 3.33
+  35% = 3.33
+  40% = 3.34
+  These total 100, so the 30–40% prizes are genuinely rare.
+*/
 const prizes=[
-  {label:"10% OFF", weight:40},
-  {label:"20% OFF", weight:35},
-  {label:"30% OFF", weight:15},
-  {label:"40% OFF", weight:10}
+ {label:"10% OFF",weight:40},
+ {label:"15% OFF",weight:25},
+ {label:"20% OFF",weight:15},
+ {label:"25% OFF",weight:10},
+ {label:"30% OFF",weight:3.33},
+ {label:"35% OFF",weight:3.33},
+ {label:"40% OFF",weight:3.34}
 ];
+
+const colors=["#8b1119","#f0dfb7","#c58a26","#07523c","#eee1bd","#99141b","#07523c"];
 const canvas=document.getElementById("wheel"),ctx=canvas.getContext("2d");
-const cx=350,cy=350,r=340;
-const colors=["#ffcc80","#ffab91","#ce93d8","#90caf9"];
-const n=prizes.length, arc=2*Math.PI/n;
+const N=prizes.length,cx=500,cy=500,R=455,arc=2*Math.PI/N;
 let rotation=0,busy=false;
 
-function draw(){
-  ctx.clearRect(0,0,700,700);
-  for(let i=0;i<n;i++){
-    const a=rotation+i*arc;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+arc);ctx.closePath();
-    ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=8;ctx.stroke();
-    ctx.save();ctx.translate(cx,cy);ctx.rotate(a+arc/2);
-    ctx.textAlign="right";ctx.fillStyle="#3b2414";ctx.font="bold 42px Arial";
-    ctx.fillText(prizes[i].label,r-28,14);ctx.restore();
-  }
-  ctx.beginPath();ctx.arc(cx,cy,58,0,2*Math.PI);ctx.fillStyle="#fff";ctx.fill();
-  ctx.strokeStyle="#e65100";ctx.lineWidth=10;ctx.stroke();
-  ctx.fillStyle="#e65100";ctx.font="bold 25px Arial";ctx.textAlign="center";ctx.fillText("LUCKY",cx,8+cy-2);
+function roundRect(x,y,w,h,r){
+ ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();
 }
-function pick(){
-  const total=prizes.reduce((s,p)=>s+p.weight,0);
-  let x=Math.random()*total;
-  for(let i=0;i<n;i++){x-=prizes[i].weight;if(x<0)return i}
-  return n-1;
+function draw(){
+ ctx.clearRect(0,0,1000,1000);
+
+ // Deep shadow
+ ctx.beginPath();ctx.arc(cx,cy,R+20,0,Math.PI*2);
+ ctx.fillStyle="#000";ctx.shadowColor="#000";ctx.shadowBlur=30;ctx.fill();ctx.shadowBlur=0;
+
+ // Outer metallic rings
+ ctx.beginPath();ctx.arc(cx,cy,R+13,0,Math.PI*2);
+ let ring=ctx.createLinearGradient(0,0,1000,1000);
+ ring.addColorStop(0,"#fff0a2");ring.addColorStop(.22,"#9b5e12");ring.addColorStop(.5,"#ffe99a");ring.addColorStop(.76,"#b87317");ring.addColorStop(1,"#fff0a5");
+ ctx.fillStyle=ring;ctx.fill();
+
+ ctx.beginPath();ctx.arc(cx,cy,R+3,0,Math.PI*2);
+ ctx.fillStyle="#321308";ctx.fill();
+
+ // Segments
+ for(let i=0;i<N;i++){
+   const a=rotation+i*arc;
+   ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a,a+arc);ctx.closePath();
+   let g=ctx.createLinearGradient(0,0,1000,1000);
+   if(colors[i]==="#8b1119"||colors[i]==="#99141b"){g.addColorStop(0,"#b51a24");g.addColorStop(.55,"#7d0c15");g.addColorStop(1,"#43070c")}
+   else if(colors[i]==="#07523c"){g.addColorStop(0,"#0c7655");g.addColorStop(.55,"#07523c");g.addColorStop(1,"#032b20")}
+   else {g.addColorStop(0,"#fff3cb");g.addColorStop(.5,"#e8d09b");g.addColorStop(1,"#b88a3c")}
+   ctx.fillStyle=g;ctx.fill();
+   ctx.strokeStyle="#f6d889";ctx.lineWidth=8;ctx.stroke();
+
+   // Decorative separator jewel
+   const mid=a+arc/2;
+   const px=cx+Math.cos(mid)*(R-13),py=cy+Math.sin(mid)*(R-13);
+   ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fillStyle="#f9df8e";ctx.fill();
+   ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);ctx.fillStyle="#7e4310";ctx.fill();
+
+   // Label
+   ctx.save();ctx.translate(cx,cy);ctx.rotate(mid);ctx.textAlign="right";
+   const dark=!["#8b1119","#99141b","#07523c"].includes(colors[i]);
+   ctx.fillStyle=dark?"#281308":"#fff2c9";
+   ctx.font="800 49px Arial,sans-serif";
+   ctx.shadowColor="#0006";ctx.shadowBlur=3;
+   ctx.fillText(prizes[i].label,R-43,12);
+   ctx.restore();
+ }
+
+ // Center premium medallion
+ ctx.beginPath();ctx.arc(cx,cy,91,0,Math.PI*2);
+ ctx.fillStyle="#4a260d";ctx.fill();
+ ctx.beginPath();ctx.arc(cx,cy,83,0,Math.PI*2);
+ let gold=ctx.createRadialGradient(cx-20,cy-25,5,cx,cy,90);
+ gold.addColorStop(0,"#fff2ae");gold.addColorStop(.35,"#f1c55d");gold.addColorStop(.7,"#c17a18");gold.addColorStop(1,"#fff0a0");
+ ctx.fillStyle=gold;ctx.fill();
+ ctx.strokeStyle="#fff0a9";ctx.lineWidth=4;ctx.stroke();
+ ctx.fillStyle="#321407";ctx.textAlign="center";
+ ctx.font="28px Georgia";ctx.fillText("♛",cx,cy-20);
+ ctx.font="800 29px Arial";ctx.fillText("SPIN",cx,cy+17);
+}
+function pickWinner(){
+ const total=prizes.reduce((s,p)=>s+p.weight,0);
+ let x=Math.random()*total;
+ for(let i=0;i<N;i++){x-=prizes[i].weight;if(x<0)return i}
+ return N-1;
 }
 function norm(a){return ((a%(2*Math.PI))+2*Math.PI)%(2*Math.PI)}
+
 function spin(){
- if(busy)return;busy=true;document.getElementById("spin").disabled=true;
- const winner=pick();
- // Position the winning segment under the top pointer.
- const targetCenter=winner*arc+arc/2;
- const desired=norm(-Math.PI/2-targetCenter);
+ if(busy)return;
+ busy=true;
+ const btn=document.getElementById("spin"),result=document.getElementById("result");
+ btn.disabled=true;result.className="result show";
+ result.innerHTML="The wheel is spinning…<br><small>Good luck at RoyalCafe ✦</small>";
+
+ const winner=pickWinner();
+ const target=norm(-Math.PI/2-(winner*arc+arc/2));
  const current=norm(rotation);
- let delta=desired-current;if(delta<0)delta+=2*Math.PI;
- const extra=(5+Math.floor(Math.random()*3))*2*Math.PI;
- const start=rotation, end=rotation+extra+delta, duration=4300, t0=performance.now();
+ let delta=target-current;if(delta<0)delta+=2*Math.PI;
+
+ const start=rotation;
+ const end=rotation+(6+Math.floor(Math.random()*2))*2*Math.PI+delta;
+ const duration=4700,t0=performance.now();
+
  function animate(t){
-   const p=Math.min(1,(t-t0)/duration), eased=1-Math.pow(1-p,4);
+   const p=Math.min(1,(t-t0)/duration);
+   const eased=1-Math.pow(1-p,4);
    rotation=start+(end-start)*eased;draw();
-   if(p<1)requestAnimationFrame(animate);else{
-     document.getElementById("result").innerHTML="🏆 You won <strong>"+prizes[winner].label+"</strong>!<br><span style='font-size:14px;font-weight:400'>Show this screen to redeem your coupon.</span>";
-     busy=false;document.getElementById("spin").disabled=false;
+   if(p<1)requestAnimationFrame(animate);
+   else{
+     result.innerHTML=
+       '<div class="headline">🎉 Congratulations!</div>'+
+       '<span class="discount">'+prizes[winner].label+'</span>'+
+       'You have received this discount on your bill at RoyalCafe.'+
+       '<small>Thank you for visiting <b>RoyalCafe</b> ♛<br>Enjoy your meal and see you again!</small>';
+     busy=false;btn.disabled=false;
    }
  }
  requestAnimationFrame(animate);
